@@ -1,4 +1,7 @@
 #include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
 using namespace std;
 
 #define max 10
@@ -79,7 +82,7 @@ void showTicket(){
             cout<<"Departure   : " <<ticket[i].departure <<endl;
             cout<<"Destination : " <<ticket[i].destination <<endl;
             cout<<"Distance    : " <<ticket[i].distance <<endl;
-            cout<<"Price       : " <<ticket[top].proses.res <<endl;
+            cout<<"Price       : " <<ticket[top].proses.res <<endl<<endl;
         }
     }
 
@@ -119,6 +122,8 @@ void availableServiceList(){
     cout<<"\n\nSilahkan ketik 11 untuk memesan tiket : "; cin>>backMenu;
 
     if(backMenu == 11){
+        system("clear");
+        mainMenu();
         bookTicket();
     }
 
@@ -128,6 +133,7 @@ void availableServiceList(){
 void bookTicket(){
     string idBus, custName, custPhone, Departure, Destination; int Distance, choice, availableService, backMenu;
     string price = "";
+    string finalDistance = "";
 
     cout<<"BUS ID          : "; cin.ignore(); getline(cin, idBus);
     cout<<"Customer Name   : "; cin>>custName;
@@ -137,16 +143,17 @@ void bookTicket(){
     cout<<"Distance        : "; cin>>Distance;
 
     for(int i=0; i<4; i++){
-        if( Departure != availableDeparture[i]  ){
-            cout<<"Maaf, Keberangkatan dari " << Departure <<"untuk saat ini tidak tersedia";
+
+        if( Departure == availableDeparture[i]  ){
+            addTicket(idBus, custName, custPhone, Departure, Destination, Distance, price);
+            mainMenu();
+        } else if( Departure != availableDeparture[i] ) {
+            cout<<"Maaf, Keberangkatan dari " << Departure <<" untuk saat ini tidak tersedia";
             cout<<"\n\nSilahkan ketik 11 untuk melihat daftar keberangkatan dan tujuan : "; cin>>backMenu;
 
             if(availableService == 11){
                 availableServiceList();
             }
-        } else {
-            addTicket(idBus, custName, custPhone, Departure, Destination, Distance, price);
-            mainMenu();
         }
 
     }
@@ -162,15 +169,15 @@ void mainMenu(){
     menu : 
     system("clear");
 
-    cout<<"______________________________________" <<endl;
-    cout<<"|                                     |" <<endl;
-    cout<<"|                                     |" <<endl;
-    cout<<"|           BUS RESERVATION           |" <<endl;
-    cout<<"|                                     |" <<endl;
-    cout<<"|_____________________________________|" <<endl;
-    cout<<"|                                     |" <<endl; 
-    cout<<"|1.book     2.destination    3.price  |" <<endl;        
-    cout<<"|_____________________________________|" <<endl <<endl;        
+    cout<<"_________________________________________________" <<endl;
+    cout<<"|                                                |" <<endl;
+    cout<<"|                                                |" <<endl;
+    cout<<"|                 BUS RESERVATION                |" <<endl;
+    cout<<"|                                                |" <<endl;
+    cout<<"|________________________________________________|" <<endl;
+    cout<<"|                                                |" <<endl; 
+    cout<<"|1.book 2.destination 3.booked ticket 4.         |" <<endl;        
+    cout<<"|________________________________________________|" <<endl <<endl;        
 
 	cout << "Select menu : "; cin >> choice;
 
@@ -179,10 +186,10 @@ void mainMenu(){
             bookTicket();
         break;
         case 2:
-            showTicket();
+            availableServiceList();
         break;
         case 3:
-            availableServiceList();
+            showTicket();
         break;
         case 4:
             init();
