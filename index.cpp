@@ -6,13 +6,11 @@ using namespace std;
 
 #define max 10
 int top;
+
 string availableDeparture[4] = {"jogja", "magelang", "solo", "klaten"};
 string availableDestination[4] = {"jakarta", "bogor", "depok", "tangerang"};
 
-struct PROCESS{
-    int id;
-    string res;
-};
+
 struct busTicket {
     string idBus;
     string custName;
@@ -20,8 +18,7 @@ struct busTicket {
     string departure;
     string destination;
     int distance;
-    string price;
-    PROCESS proses;
+    int price;
 } ticket[max];
 
 
@@ -29,6 +26,7 @@ void init(){
     top = -1;
 }
 
+// cek apakah data kosong
 bool isEmpty(){
     if(top <= 0 ){
         return true;
@@ -37,6 +35,7 @@ bool isEmpty(){
     }
 }
 
+// cek apakah data penuh
 bool isFull(){
     if(top == max - 1){
         return true;
@@ -48,16 +47,16 @@ bool isFull(){
 void mainMenu();
 void bookTicket();
 
+// push method (nambah data)
+void addTicket(string idBus, string custName, string custPhone, string departure, string destination, int distance, int price){
+    int totalPrice;
 
-void addTicket(string idBus, string custName, string custPhone, string departure, string destination, int distance, string price){
-    string totalPrice = "";
-
-    if(isFull()){
+    if( isFull() ){
         cout<<"Kursi sudah penuh";
     } else {
         top++;
 
-        totalPrice = distance * 4000;
+        totalPrice = distance * 40000;
 
         ticket[top].idBus = idBus;
         ticket[top].custName = custName;
@@ -70,25 +69,53 @@ void addTicket(string idBus, string custName, string custPhone, string departure
     }
 }
 
+// pop (delete data)
+void deleteTicket(){
+
+    if( isEmpty() ){
+        cout<<"Data stack kosong";
+    } else {
+        // tampilkan data terakhir
+        cout<<"BUS ID      : " <<ticket[top].idBus <<endl;
+        cout<<"Customer    : " <<ticket[top].custName  <<endl;
+        cout<<"Phone       : " <<ticket[top].custPhone <<endl;
+        cout<<"Departure   : " <<ticket[top].departure <<endl;
+        cout<<"Destination : " <<ticket[top].destination <<endl;
+        cout<<"Distance    : " <<ticket[top].distance <<endl;
+        cout<<"Price       : " <<"Rp." <<ticket[top].price <<endl;
+        
+        // hapus data pertama
+        top--;
+    }
+}
+
 void showTicket(){
     int backMenu;
+    int delMenu;
+
     if(isEmpty()){
         cout<<"Data tiket kosong";
     } else {
-        for(int i=1; i<top+1; i++){
+            cout<<" ==== data penumpang ===" <<endl;
+
+        for( int i=1; i<top+1; i++ ){
             cout<<"BUS ID      : " <<ticket[i].idBus <<endl;
             cout<<"Customer    : " <<ticket[i].custName  <<endl;
             cout<<"Phone       : " <<ticket[i].custPhone <<endl;
             cout<<"Departure   : " <<ticket[i].departure <<endl;
             cout<<"Destination : " <<ticket[i].destination <<endl;
             cout<<"Distance    : " <<ticket[i].distance <<endl;
-            cout<<"Price       : " <<ticket[top].proses.res <<endl<<endl;
+            cout<<"Price       : " <<"Rp." <<ticket[i].price <<endl <<endl;
         }
+
     }
 
-    cout <<"\n\nPress 11 to back to menu : "; cin>>backMenu;
-    if(backMenu == 11){
-       mainMenu();
+    cout <<"\n\n33 to delete first ticket || 11 to back to main menu : "; cin>>delMenu;
+    
+    if(delMenu == 11){
+        mainMenu(); // kembali ke menu utama
+    } else if(delMenu == 33){
+        deleteTicket(); // fungsi pop / delete data 
     }
 
 }
@@ -100,65 +127,52 @@ void availableServiceList(){
     cout<<" ______________________________________"  <<endl;
     cout<<"|                                      |" <<endl;
     cout<<"|  Kota keberangkatan yang tersedia :  |" <<endl<<endl;
-    
     for(int i=0; i<4; i++){
         cout<<"   - " <<availableDeparture[i] <<endl;
     }
-
     cout<<"|______________________________________|" <<endl;
-
 
 
     cout<<" ______________________________________"  <<endl;
     cout<<"|                                      |" <<endl;
     cout<<"|      Kota tujuan yang tersedia :     |" <<endl<<endl;
-    
     for(int i=0; i<4; i++){
         cout<<"   - " <<availableDestination[i] <<endl;
     }
-
     cout<<"|______________________________________|" <<endl;
 
-    cout<<"\n\nSilahkan ketik 11 untuk memesan tiket : "; cin>>backMenu;
+    cout<<"\n\nSilahkan ketik 22 untuk kembali ke menu utama : "; cin>>backMenu;
 
-    if(backMenu == 11){
+    if(backMenu == 22){
         system("clear");
         mainMenu();
-        bookTicket();
     }
 
 
 }
 
 void bookTicket(){
+    // buat variable
     string idBus, custName, custPhone, Departure, Destination; int Distance, choice, availableService, backMenu;
-    string price = "";
+    int price;
     string finalDistance = "";
 
+    // tangkap user input
     cout<<"BUS ID          : "; cin.ignore(); getline(cin, idBus);
     cout<<"Customer Name   : "; cin>>custName;
     cout<<"Customer Phone  : "; cin.ignore(); getline(cin, custPhone);
-    cout<<"Departure       : "; cin>>Departure;
+    cout<<"From            : "; cin>>Departure;
     cout<<"Destination     : "; cin>>Destination;
     cout<<"Distance        : "; cin>>Distance;
 
+    // cek, apakah kota asal tersedia
     for(int i=0; i<4; i++){
-
         if( Departure == availableDeparture[i]  ){
+            // panggil fungsi push
             addTicket(idBus, custName, custPhone, Departure, Destination, Distance, price);
             mainMenu();
-        } else if( Departure != availableDeparture[i] ) {
-            cout<<"Maaf, Keberangkatan dari " << Departure <<" untuk saat ini tidak tersedia";
-            cout<<"\n\nSilahkan ketik 11 untuk melihat daftar keberangkatan dan tujuan : "; cin>>backMenu;
-
-            if(availableService == 11){
-                availableServiceList();
-            }
-        }
-
+        }  
     }
-
-
     
 }
 
@@ -176,7 +190,7 @@ void mainMenu(){
     cout<<"|                                                |" <<endl;
     cout<<"|________________________________________________|" <<endl;
     cout<<"|                                                |" <<endl; 
-    cout<<"|1.book 2.destination 3.booked ticket 4.         |" <<endl;        
+    cout<<"|1.booking   2.destination   3.booked ticket     |" <<endl;        
     cout<<"|________________________________________________|" <<endl <<endl;        
 
 	cout << "Select menu : "; cin >> choice;
